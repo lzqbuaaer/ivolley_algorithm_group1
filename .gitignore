@@ -1,0 +1,16 @@
+.idea/
+output/
+predictions/
+videos/
+*.zip
+*.pyc
+*.pth
+*.pt
+src/G2/work_dir/
+src/G2/classify/config/
+dfs.py
+draw-abc.py
+trytry.py
+try/
+tttG2.py
+path_to_save_frames/
