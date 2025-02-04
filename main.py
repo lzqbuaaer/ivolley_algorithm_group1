@@ -53,6 +53,7 @@ def solve(url, tag):
 if __name__ == '__main__':
     Log.info("项目已启动")
     if debug:
-        solve(os.path.join('videos', '21373267_2024_03_26_19_42_40.mp4'), 0)
+        ret = solve(os.path.join('videos', 'test.mp4'), 0)
+        print("ret = ", ret)
     else:
         app.run(host='127.0.0.1', port=5000)

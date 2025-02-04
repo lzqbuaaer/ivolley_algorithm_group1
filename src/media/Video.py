@@ -6,7 +6,7 @@ import numpy as np
 from mmpose.apis import MMPoseInferencer
 
 from settings import *
-from moviepy.editor import VideoFileClip
+from moviepy.video.io.VideoFileClip import VideoFileClip
 import settings
 from src.media import tools_3d
 from src.media.Image import Image
@@ -47,8 +47,14 @@ class Video:
         self.output_path = os.path.join(settings.AlgorithmPath, settings.VideoOutputPath,
                                         Path(url).stem) + Video.output_format
         Log.info(f"开始解析视频 目标路径 : {self.output_path}")
-        self.writer = cv2.VideoWriter(self.output_path, cv2.VideoWriter_fourcc(*'MJPG'), self.fps,
+
+        if not os.path.exists(os.path.dirname(self.output_path)):
+            os.makedirs(os.path.dirname(self.output_path))
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG') 
+        self.writer = cv2.VideoWriter(self.output_path, fourcc, self.fps,
                                       (self.width, self.height))
+        if not self.writer.isOpened():
+            print("视频写入器无法打开，请检查输出路径或编码格式")
         self.blank_frame = 255 * np.ones((self.height, self.width, 3), np.uint8)  # 创建一个白色的帧，如果需要黑色帧可以使用0 * np.ones
         while True:
             ret = self.videoCapture.grab()
@@ -638,12 +644,19 @@ class Video:
         self.writer.release()
         if len(slow_parameter) != 0:
             self.slow_motion_flow(self.output_path, slow_parameter, self.output_path.replace('.avi', '_slow.avi'))
-            video = VideoFileClip(self.output_path.replace('.avi', '_slow.avi'))
-            video.write_videofile(self.output_path.replace('.avi', '_slow.mp4'), codec='libx264', audio_codec='aac')
-            os.remove(self.output_path.replace('.avi', '_slow.avi'))
-        else:  # 不需要慢放
-            video = VideoFileClip(self.output_path)
-            video.write_videofile(self.output_path.replace('.avi', '_slow.mp4'), codec='libx264', audio_codec='aac')
-        Log.info(f"视频已重构：{self.output_path.replace('.avi', '_slow.mp4')}")
-        os.remove(self.output_path)
-        return self.output_path.replace('.avi', '_slow.mp4')
+        #     video = VideoFileClip(self.output_path.replace('.avi', '_slow.avi'))
+        #     output_mp4 = self.output_path.replace('.avi', '_slow.mp4')
+        #     video.write_videofile(output_mp4, codec='libx264', audio_codec='aac')
+        #     os.remove(self.output_path.replace('.avi', '_slow.avi'))
+        # else:  # 不需要慢放
+        #     video = VideoFileClip(self.output_path)
+        #     video.write_videofile(self.output_path.replace('.avi', '_slow.mp4'), codec='libx264', audio_codec='aac')
+        # Log.info(f"视频已重构：{self.output_path.replace('.avi', '_slow.mp4')}")
+        # os.remove(self.output_path)
+        # return self.output_path.replace('.avi', '_slow.mp4')
+
+        if len(slow_parameter) != 0:
+            return self.output_path.replace('.avi', '_slow.avi')
+        else:
+            return self.output_path
+

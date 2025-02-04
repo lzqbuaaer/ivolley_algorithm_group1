@@ -99,30 +99,31 @@ def process_frame(img, arrays):
 def process3d(input_path):
     print('视频开始处理', input_path)
     lefts, rights, angles, points = [], [], [], []
+
     cap = cv2.VideoCapture(input_path)
-    frame_count = 0
-    while (cap.isOpened()):
+    if not cap.isOpened():
+        print(f"无法打开视频文件: {input_path}")
+        return lefts, rights, angles, points
+
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # 获取总帧数
+    print('视频总帧数为', frame_count)
+
+    # with tqdm(total=frame_count, disable=False) as pbar:
+    cnt = 1
+    while cap.isOpened():
         success, frame = cap.read()
-        frame_count += 1
         if not success:
             break
-    cap.release()
-    print('视频总帧数为', frame_count)
-    cap = cv2.VideoCapture(input_path)
-    with tqdm(total=frame_count) as pbar:
-        while (cap.isOpened()):
-            success, frame = cap.read()
-            if not success:
-                break
-            try:
-                process_frame(frame, [lefts, rights, angles, points])
-            except Exception as e:
-                print('处理帧时出错:', e)
-                pass
-            # 写入帧到输出视频
-            if success:
-                pbar.update(1)
+        try:
+            process_frame(frame, [lefts, rights, angles, points])
+            print(f'处理第{cnt}帧成功')
+            cnt += 1
+        except Exception as e:
+            print('处理帧时出错:', e)
+            pass
+            # pbar.update(1)  # 在每一帧成功处理后更新进度条
+
     cap.release()
     cv2.destroyAllWindows()
-    return [lefts, rights, angles, points]
+    return lefts, rights, angles, points
 

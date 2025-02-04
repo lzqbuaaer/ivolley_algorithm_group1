@@ -81,7 +81,7 @@ def draw_messages(image, messages):
     )
 
     # 获取字体宽度和高度
-    text_width, text_height = font_style.getsize(text)
+    text_width, text_height = font_style.getbbox(text)[2:4]
 
     # 计算文字位置
     image_height, image_width, _ = img.shape
