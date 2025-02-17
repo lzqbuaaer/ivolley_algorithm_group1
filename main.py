@@ -53,7 +53,7 @@ def solve(url, tag):
 if __name__ == '__main__':
     Log.info("项目已启动")
     if debug:
-        ret = solve(os.path.join('videos', 'test.mp4'), 0)
+        ret = solve(os.path.join('videos', 'spike2.mp4'), 1)
         print("ret = ", ret)
     else:
         app.run(host='127.0.0.1', port=5000)

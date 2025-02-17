@@ -9,6 +9,8 @@ from src.utils.logger import Log
 rule_dig = Rule(Action.Dig)
 rule_pass = Rule(Action.Pass)
 rule_serve = Rule(Action.Serve)
+rule_spike = Rule(Action.Spike)
+rule_block = Rule(Action.Block)
 
 
 def judge_video(type, datas, video):
@@ -44,6 +46,10 @@ def judge_video(type, datas, video):
             msg_action = rule_serve(curAction, images, candidates, persons, balls)
             if "未检测到发球动作" not in msg_action:
                 serve_detected = True
+        elif type[i] == 1:  # Action.Spike:
+            msg_action = rule_spike(curAction, images, candidates, persons, balls, hit=(action['hit'] - action['start']))
+        elif type[i] == 2:  # Action.Block:
+            msg_action = rule_block(curAction, images, candidates, persons, balls, hit=(action['hit'] - action['start']))
         else:
             return msg, None
         msg.update(msg_action)
